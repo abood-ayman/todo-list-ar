@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قائمة المهام اليومية | أداة مجانية</title>
+<meta name="description" content="قائمة مهام بسيطة وسريعة تُحفظ على جهازك فقط: أضف مهامك، علّم ما أنجزته، واحذف ما انتهى. لا حسابات ولا إنترنت ولا تتبع.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Tahoma,'Segoe UI',Arial,sans-serif;background:#f1f5f9;color:#1e293b;line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;padding:1.6rem 1rem;text-align:center}
+header h1{font-size:1.5rem}
+.tagline{opacity:.92;font-size:.95rem;margin-top:.25rem}
+main{flex:1;width:100%;max-width:560px;margin:0 auto;padding:1rem}
+.card{background:#fff;border-radius:14px;padding:1.25rem;box-shadow:0 1px 4px rgba(15,23,42,.08);margin-bottom:1rem}
+.card h2{font-size:1.1rem;margin-bottom:.4rem;color:#0f766e}
+label{display:block;font-weight:700;margin:.75rem 0 .3rem}
+input,select,textarea{width:100%;padding:.7rem .8rem;border:1.5px solid #cbd5e1;border-radius:10px;font-size:1rem;font-family:inherit;background:#fff;color:#1e293b}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#0f766e;box-shadow:0 0 0 3px rgba(20,184,166,.18)}
+.row{display:flex;gap:.6rem}
+.row>*{flex:1;min-width:0}
+button{display:inline-block;width:100%;padding:.8rem;border:0;border-radius:10px;background:#0f766e;color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:1rem}
+button:hover{background:#115e59}
+button.ghost{background:#e2e8f0;color:#1e293b}
+.result{background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:10px;padding:1rem;margin-top:1rem;font-size:1.05rem;word-break:break-word}
+.result b{color:#047857}
+.result.warn{background:#fffbeb;border-color:#fcd34d}
+.result.warn b{color:#b45309}
+.result.bad{background:#fef2f2;border-color:#fca5a5}
+.result.bad b{color:#b91c1c}
+.muted{color:#64748b;font-size:.85rem}
+footer{background:#0f172a;color:#94a3b8;text-align:center;padding:1.2rem 1rem;font-size:.85rem;line-height:1.9}
+footer a{color:#5eead4}
+table{width:100%;border-collapse:collapse;margin-top:.5rem}
+th,td{padding:.5rem;border-bottom:1px solid #e2e8f0;text-align:right;font-size:.95rem}
+.big{font-size:1.6rem;font-weight:800}
+.hidden{display:none}
+.chk{display:flex;align-items:center;gap:.5rem;margin:.3rem 0}
+.chk input{width:auto}
+
+</style>
+</head>
+<body>
+<header>
+<h1>قائمة المهام اليومية</h1>
+<p class="tagline">مهامك محفوظة على جهازك فقط — لا حساب ولا خادم</p>
+</header>
+<main>
+<div class="card">
+<h2>أضف مهمة</h2>
+<div class="row">
+<input type="text" id="task" placeholder="مثال: مراجعة درس الرياضيات" onkeydown="if(event.key==='Enter')addTask()">
+<button style="width:auto;margin-top:0;padding:.7rem 1.2rem" onclick="addTask()">أضف</button>
+</div>
+</div>
+<div class="card">
+<h2>مهامي <span class="muted" id="count"></span></h2>
+<ul id="list"></ul>
+<p class="muted" id="empty">لا مهام بعد. أضف أول مهمة فوق.</p>
+<button class="ghost hidden" id="clearDone" onclick="clearDone()">امسح المنجزة</button>
+</div>
+
+</main>
+<footer>
+<p>تعمل هذه الأداة بالكامل على جهازك، ولا تُحفظ أو تُرسل أي بيانات إلى أي خادم.</p>
+<p>أداة مجانية مفتوحة المصدر · بُنيت بمساعدة أدوات ذكاء اصطناعي · <a href="https://github.com/abood-ayman/todo-list-ar">الكود على GitHub</a></p>
+</footer>
+<script>
+window.__jserrors=[];window.addEventListener('error',function(e){window.__jserrors.push(String(e.message))});
+const g = id => document.getElementById(id);
+const KEY = 'todo-list-ar-items';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; }
+}
+function save(items) {
+  try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) { /* private mode */ }
+}
+function add(items, text) {
+  const t = (text || '').trim();
+  if (!t) return items;
+  return items.concat([{ id: Date.now() + Math.random(), text: t, done: false }]);
+}
+function toggleItem(items, id) {
+  return items.map(i => i.id === id ? { ...i, done: !i.done } : i);
+}
+function removeItem(items, id) {
+  return items.filter(i => i.id !== id);
+}
+function remaining(items) { return items.filter(i => !i.done).length; }
+
+let items = load();
+
+function render() {
+  const ul = g('list');
+  ul.innerHTML = '';
+  for (const it of items) {
+    const li = document.createElement('li');
+    li.className = 'chk';
+    li.style.borderBottom = '1px solid #e2e8f0';
+    li.style.padding = '.5rem 0';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = it.done;
+    cb.onchange = () => { items = toggleItem(items, it.id); save(items); render(); };
+    const span = document.createElement('span');
+    span.textContent = it.text;
+    span.style.flex = '1';
+    if (it.done) { span.style.textDecoration = 'line-through'; span.style.color = '#94a3b8'; }
+    const del = document.createElement('button');
+    del.textContent = 'حذف';
+    del.className = 'ghost';
+    del.style.cssText = 'width:auto;margin:0;padding:.2rem .8rem;font-size:.85rem';
+    del.onclick = () => { items = removeItem(items, it.id); save(items); render(); };
+    li.append(cb, span, del);
+    ul.appendChild(li);
+  }
+  const rem = remaining(items);
+  g('count').textContent = items.length ? '(' + rem + ' متبقية من ' + items.length + ')' : '';
+  g('empty').style.display = items.length ? 'none' : 'block';
+  g('clearDone').classList.toggle('hidden', !items.some(i => i.done));
+}
+
+function addTask() {
+  items = add(items, g('task').value);
+  g('task').value = '';
+  save(items); render();
+}
+function clearDone() {
+  items = items.filter(i => !i.done);
+  save(items); render();
+}
+
+render();
+
+window.__test = function () {
+  let a = [];
+  a = add(a, 'مهمة أولى'); a = add(a, '  '); a = add(a, 'مهمة ثانية');
+  const t1 = a.length === 2 && remaining(a) === 2;
+  a = toggleItem(a, a[0].id);
+  const t2 = remaining(a) === 1 && a[0].done === true;
+  a = removeItem(a, a[1].id);
+  const t3 = a.length === 1;
+  let roundtrip = false;
+  try { save(a); const b = load(); roundtrip = b.length === 1 && b[0].text === 'مهمة أولى' && b[0].done === true; localStorage.removeItem(KEY); } catch (e) { }
+  return { pass: t1 && t2 && t3 && roundtrip, details: { t1, t2, t3, roundtrip } };
+};
+
+window.__demo = function () {
+  items = [{ id: 1, text: 'مراجعة درس الرياضيات', done: true }, { id: 2, text: 'تقديم على وظيفة جديدة', done: false }, { id: 3, text: 'مكالمة مع عميل', done: false }];
+  save(items); render();
+};
+
+</script>
+</body>
+</html>
