@@ -1,28 +1,27 @@
-# قائمة المهام اليومية
+# To-Do List | قائمة المهام اليومية
 
-مهامك محفوظة على جهازك فقط — لا حساب ولا خادم
+A simple, fast to-do list saved only on your device: add tasks, check off what you finish, delete what is done. Arabic interface.
 
-**رابط الأداة (تعمل فورًا من المتصفح):** https://abood-ayman.github.io/todo-list-ar/
+**Live app:** https://abood-ayman.github.io/todo-list-ar/
 
-## ما الذي تقدمه؟
+![To-Do List, mobile view](docs/screenshot.svg)
 
-- إضافة مهام وتمييز المنجز منها وحذف ما انتهيت منه
-- تُحفظ تلقائيًا في متصفحك (localStorage) فتبقى بعد إغلاق الصفحة
-- عداد للمتبقي وشريط إنجاز يتحرك معك
-- زر لمسح المهام المنجزة دفعة واحدة
+This is a personal project, built with AI tools.
 
-## الخصوصية
+## Features
+- Add tasks, mark them done, delete finished ones
+- Auto-saved in your browser (localStorage), survives closing the page
+- Remaining counter and a progress bar that moves with you
+- One button to clear all completed tasks
 
-تعمل الأداة بالكامل داخل متصفحك (HTML/CSS/JavaScript فقط). لا يوجد خادم، ولا حسابات، ولا تتبّع، ولا تُرسل أو تُحفظ أي بيانات تدخلها خارج جهازك.
+## Privacy
+Everything runs in your browser. No data is stored or sent anywhere.
 
-## التقنية
+## Run locally
+Open `index.html` in any browser. It is a single static page with no dependencies.
 
-صفحة ثابتة واحدة بلا أي مكتبات خارجية، تعمل على الهاتف والحاسوب، وتُستضاف مجانًا عبر GitHub Pages.
+## Status
+Stable.
 
-## ملاحظة شفافية
-
-بُنيت هذه الأداة بمساعدة أدوات ذكاء اصطناعي، ورُوعيَت بساطتها وفائدتها المباشرة.
-
-## الرخصة
-
-MIT — انظر ملف LICENSE.
+## Copyright
+MIT License - Copyright (c) 2026 Abdullah Ayman.
