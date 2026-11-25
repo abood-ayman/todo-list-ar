@@ -4,6 +4,8 @@ A simple, fast to-do list saved only on your device: add tasks, check off what y
 
 **Live app:** https://abood-ayman.github.io/todo-list-ar/
 
+**LinkedIn:** [Project entry](https://www.linkedin.com/in/abdullah-ayman-1678b737b/details/projects/)
+
 ![To-Do List, mobile view](docs/screenshot.svg)
 
 This is a personal project, built with AI tools.
